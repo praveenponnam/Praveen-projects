@@ -1,0 +1,140 @@
+Praveen-projects
+================
+<html>
+<head>
+<style type="text/css">
+.seat {
+width:50px;
+height:50px;
+display:inline;
+}
+</style>
+<script type="text/javascript">
+function bookSeat()
+{
+var sname=document.getElementById('sname').value;
+var sid=document.getElementById('sid').value;
+var seat=document.getElementById('seat'+sid);
+var name=localStorage.getItem('seat'+sid);
+if(name!=null)
+{
+alert("seat is already booked");
+var udata={name:sname,seat:sid};
+var qdata=localStorage.getItem('queue');
+if(qdata==null)
+{
+var queue=[];
+}
+else
+{
+var queue=JSON.parse(qdata);
+//alert(queue);
+}
+queue[queue.length]=udata;
+var jsn=JSON.stringify(queue);
+localStorage.setItem('queue',jsn);
+}
+else
+{
+seat.src="images/seat_r.png";
+localStorage.setItem('seat'+sid,sname);
+}
+readSeats();
+}
+function readSeats()
+{
+var seat1=localStorage.getItem('seat1');
+var seat2=localStorage.getItem('seat2');
+var seat3=localStorage.getItem('seat3');
+if(seat1!=null)
+{
+var seat=document.getElementById('seat1');
+seat.src='images/seat_r.png';
+}
+else
+{
+var seat=document.getElementById('seat1');
+seat.src='images/seat.png';
+}
+if(seat2!=null)
+{
+var seat=document.getElementById('seat2');
+seat.src='images/seat_r.png';
+}
+else
+{
+var seat=document.getElementById('seat2');
+seat.src='images/seat.png';
+}
+if(seat3!=null)
+{
+var seat=document.getElementById('seat3');
+seat.src='images/seat_r.png';
+}
+else
+{
+var seat=document.getElementById('seat3');
+seat.src='images/seat.png';
+}
+var con=document.getElementById('seat_content');
+con.innerHTML=seat1+","+seat2+","+seat3;
+var qdata=localStorage.getItem('queue');
+var queue=JSON.parse(qdata);
+var squeue=document.getElementById('s_queue');
+squeue.innerHTML="";
+for(var i=0;i<queue.length;i++)
+{
+var que_ele=queue[i];
+var uname=que_ele['name'];
+var useat=que_ele['seat'];
+squeue.innerHTML += uname+"-"+useat+"<br>";
+}
+}
+function cancelSeat(sid)
+{
+var name=localStorage.getItem('seat'+sid);
+if(name!=null)
+{
+localStorage.removeItem('seat'+sid);
+allocate(sid);
+readSeats();
+}
+}
+function allocate(sid)
+{
+var qdata=localStorage.getItem('queue');
+var queue=JSON.parse(qdata);
+for(var i=0;i<queue.length;i++)
+{
+var qterm=queue[i];
+if(qterm['seat'] == sid)
+{
+queue.splice(i,1);
+localStorage.setItem('seat'+sid,qterm['name']);
+localStorage.setItem('queue',JSON.stringify(queue));
+break;
+}
+}
+}
+</script>
+</head>
+<body><center>
+<div id='main'>
+<div id='seat_area'>
+<img src="images/seat.png" id='seat1' class='seat' onClick='cancelSeat(1)'>
+<img src="images/seat.png" id='seat2' class='seat' onClick='cancelSeat(2)'>
+<img src="images/seat.png" id='seat3' class='seat' onClick='cancelSeat(3)'>
+</div>
+<input type="text" id="sname" />
+<input type="text" id="sid" />
+<button type="button" id='btn1' onClick="bookSeat()" >Book</button>
+<script type='text/javascript'>
+readSeats();
+</script>
+<div id='seat_content'>
+</div>
+<div id='s_queue'>
+</div>
+</center>
+</body>
+</html>
